@@ -1,5 +1,5 @@
 # Methacrylate Monolith Simulator
-(Latest release: v.donut1.0.0-beta. See Releases section) 
+(Latest release: v.donut1.1.0-beta. See Releases section) 
 
 Desktop app for quickly exploring methacrylate monolith design, pressure behavior, pore structure, and synthesis recipe guidance.
 
@@ -58,6 +58,7 @@ Tip: Most calculations need an active monolith first. Flow/porous features also 
   - Toggle `Show/Hide 3D porous view` and `Show/Hide X-ray porous view`
 - **Tools**
   - `Pores from SEM images (PyVista)...`
+  - `SEM pores + microscopic flow (PyVista)...`
   - `Synthesis recipe (GMA–EDMA)`
   - `View 3D monolith (PyVista)...`
 
@@ -108,10 +109,25 @@ Tip: Most calculations need an active monolith first. Flow/porous features also 
   - If unavailable, run `Analysis -> Bimodal distributions` first to build porous mesh data (required for porous/X-ray rendering).
 - **PyVista windows (separate 3D viewers)**
   - `Tools -> View 3D monolith (PyVista)...` for standalone 3D viewing.
-  - `Tools -> Synthesis recipe (GMA–EDMA)`: generates recipes and suggested procedures for monolith preparation. See below for more. 
-  - `Tools -> Pores from SEM images (PyVista)...` to generate pores from SEM images and open a 3D PyVista view.
+  - `Tools -> Pores from SEM images (PyVista)...` to generate pores from a SEM TIF and open a 3D PyVista view (no flow overlay).
+  - `Tools -> SEM pores + microscopic flow (PyVista)...` to do the same **and** overlay local pore-channel flow.
+  - Recipe tool is under `Tools -> Synthesis recipe (GMA–EDMA)` (see below).
 - **SEM-based workflow**
-  - Uses SEM image input to derive pore structure, then opens a PyVista visualization for exploration.
+  - Pick a SEM image (TIF/TIFF). The app builds a voxel pore field and opens a separate PyVista window (loading bar stays until the 3D view is ready).
+- **Microscopic pore flow (SEM mode)** — typical run:
+  1. Active monolith with **porosity > 0**.
+  2. `Tools -> SEM pores + microscopic flow (PyVista)...` → choose SEM TIF.
+  3. Choose **Radial**, **Axial**, or **Cancel** in the direction dialog:
+     - **Radial** — pressure drive outer wall → inner bore
+     - **Axial** — pressure drive top → bottom
+  4. In the PyVista window:
+     - Zoomed out: dense overview arrows through the bed
+     - Zoomed in: even pore-following threads (radial: outer→inner; axial: top→bottom)
+     - Blue **Inlet** / red **Outlet** guides (translucent in radial mode); toggle with the small checkbox near the lower-right hint, or press **O**
+  5. Close the PyVista window when finished (returns you to the main app).
+  - Paths stay in pore voxels; solid walls block flow. Local coloring reflects channel speed contrast (simplified steady Darcy model inspired by Jungreuthmayer et al., 2015; not full CFD).
+  - Full citation: `Help -> About simulator...` (`SIMULATOR_INTRO_AND_REFERENCES.txt`).
+  - Macroscopic `Analysis` flow panels (`2D/3D radial`, `2D axial`) stay separate schematic tools.
 
 
 ## Recipe Tool in 30 Seconds
@@ -151,9 +167,25 @@ Note: flexible mode is a theory-informed screening aid, not a lab guarantee.
 - **No active monolith**: create one first in `Build -> Methacrylate monolith...`.
 - **Flow/porous features are disabled**: ensure a monolith is active and porosity is greater than 0.
 - **X-ray or 3D porous view not updating**: run `Analysis -> Bimodal distributions` first (required).
+- **SEM microscopic flow looks empty**: porosity must be > 0; use a clear dark-pore SEM TIF via `Tools -> SEM pores + microscopic flow (PyVista)...`. Zoom in to see detail threads; overview and detail do not stack.
+- **Inlet/Outlet guides in the way**: uncheck **Show Inlet/Outlet** (lower right) or press **O**.
+- **3D viewer timed out / would not stay open**: try again; on slow machines set environment variable `MONOLITH_PV_LOADING_HANDSHAKE_S` to a larger number of seconds. Check `logs\app.log` (see Help / log manual if shipped).
 - **App does not start**: reinstall the app, then launch again from Start menu.
 - **Feature missing (for example flexible mode)**: your installed build may not include optional components.
 - **Mechanical graph export disabled**: open a graph first using the toolbar `Graphs` button.
+
+## Help Menu
+
+- `Help -> Quick start` — this file (`README.md`)
+- `Help -> User guide` — `USER_GUIDE.md`
+- `Help -> About simulator...` — intro + APA reference list (`SIMULATOR_INTRO_AND_REFERENCES.txt`)
+- `Help -> Debug -> Open log folder` — open the folder that contains `app.log`
+
+## Selected scientific reference (microscopic PyVista flow)
+
+Jungreuthmayer, C., Steppert, P., Sekot, G., Zankel, A., Reingruber, H., Zanghellini, J., & Jungbauer, A. (2015). The 3D pore structure and fluid dynamics simulation of macroporous monoliths: High permeability due to alternating channel width. *Journal of Chromatography A, 1425*, 141–149. https://doi.org/10.1016/j.chroma.2015.11.026
+
+(Full reference list: `Help -> About simulator...`)
 
 ## Safety and Model Scope
 
@@ -161,20 +193,22 @@ This simulator provides useful engineering-style estimates. Final process choice
 The simulator is built on assumptions and mathematical models for methacrylate monolith systems and may not transfer reliably to other monolith chemistries.
 Local regulations of waste handling should always be followed.
 
-Simulator scope (for user-facing release context)
------------------------------------------------
-This simulator integrates a methacrylate-monolith mathematics core with physical
-constraints and simulation workflows (pressure-drop/compression behavior,
-monolith geometry and pore-structure calculations, and axial/radial flow tools)
-based on the peer-reviewed literature below.
+## Simulator scope (for user-facing release context)
 
-References (APA 7th)
---------------------
-High Purity New England. (2021, March). High Purit-general presentation [PowerPoint slides]. https://hp-ne.com/wp-content/uploads/2021/03/High_Purit-general_presentation.pdf
+This simulator integrates a methacrylate-monolith mathematics core with physical constraints and simulation workflows (pressure-drop/compression behavior, monolith geometry and pore-structure calculations, and axial/radial flow tools) based on the peer-reviewed literature below.
+
+## REFERENCES (APA 7TH)
+
+High Purity New England. (2021, March). High Purit-general presentation
+[PowerPoint slides].
+https://hp-ne.com/wp-content/uploads/2021/03/High_Purit-general_presentation.pdf
+
+Jungreuthmayer, C., Steppert, P., Sekot, G., Zankel, A., Reingruber, H., Zanghellini, J., & Jungbauer, A. (2015). The 3D pore structure and fluid dynamics simulation of macroporous monoliths: High permeability due to alternating channel width. Journal of Chromatography A, 1425, 141-149. https://doi.org/10.1016/j.chroma.2015.11.026
 
 Korzhikova-Vlakh, E. G., & Tennikova, T. B. (2021). Some factors affecting pore size in the synthesis of rigid polymer monoliths: Theory and its applicability. Journal of Applied Polymer Science, 139(1). https://doi.org/10.1002/app.51431
 
-Merhar, M., Podgornik, A., Barut, M., Zigon, M., & Strancar, A. (2003). Methacrylate monoliths prepared from various hydrophobic and hydrophilic monomers - Structural and chromatographic characteristics. Journal of Separation Science, 26, 322-330. https://doi.org/10.1002/jssc.200390038
+Merhar, M., Podgornik, A., Barut, M., Zigon, M., & Strancar, A. (2003). Methacrylate monoliths prepared from various hydrophobic and hydrophilic
+monomers - Structural and chromatographic characteristics. Journal of Separation Science, 26, 322-330. https://doi.org/10.1002/jssc.200390038
 
 Mihelic, I., Krajnc, M., Koloini, T., & Podgornik, A. (2001). Kinetic model of a methacrylate-based monolith polymerization. Industrial & Engineering Chemistry Research, 40(16), 3495-3501. https://doi.org/10.1021/ie010146m
 
@@ -182,14 +216,15 @@ Podgornik, A., Barut, M., Strancar, A., Josic, D., & Koloini, T. (2000). Constru
 
 Podgornik, A., Savnik, A., Jancar, J., & Lendero Krajnc, N. (2014). Design of monoliths through their mechanical properties. Journal of Chromatography A, 1333, 9-17. https://doi.org/10.1016/j.chroma.2014.01.038
 
-Svec, F., & Frechet, J. M. J. (1992). Continuous rods of macroporous polymer as high-performance liquid chromatography separation media. Analytical Chemistry, 64(7), 820-822. https://doi.org/10.1021/ac00031a022
+Svec, F., & Frechet, J. M. J. (1992). Continuous rods of macroporous polymer as high-performance liquid
+chromatography separation media. Analytical Chemistry, 64(7), 820-822. https://doi.org/10.1021/ac00031a022
 
 Svec, F., & Frechet, J. M. J. (1995). Temperature, a simple and efficient tool for the control of pore size distribution in macroporous polymers. Macromolecules, 28(22), 7580-7582. https://doi.org/10.1021/ma00126a044
 
 Yang, C., Wei, Y., Zhang, Q., Zhang, W., Li, T., Hu, H., & Zhang, Y. (2005). Preparation and evaluation of a large-volume radial flow monolithic column. Talanta, 66(2), 472-478. https://doi.org/10.1016/j.talanta.2004.09.027
 
-ATTRIBUTIONS
-----------------
+## ATTRIBUTIONS
+
 Finish page image (Setup exe):
 Title: A three-headed eagle in a crowned alchemical flask (from Splendor Solis tradition)
 Source: Wellcome Collection via Wikimedia Commons
@@ -198,13 +233,17 @@ Author: Wellcome Collection
 License: Creative Commons Attribution 4.0 International (CC BY 4.0)
 https://creativecommons.org/licenses/by/4.0/
 
-NOTES FOR USERS
--------------------
+## NOTES FOR USERS
+
 - This file is intended as a plain-text, Notepad-friendly reference list (APA 7th).
 - Companion documents in the same folder:
-  - README.md ............... feature overview, menus, dependencies, logging summary
-  - USER_GUIDE.md ............... in-depth introduction of features and output interpretation
+  - README.md ............... feature overview, menus, SEM microscopic-flow quick path
+  - USER_GUIDE.md ............... in-depth workflows and output interpretation
+  - LOG_INSTRUCTION_MANUAL.txt ... where logs live and what microscopic-flow lines mean
+  - build_exe.md ............... packaging with auto-py-to-exe / Inno Setup checklist
+- The Jungreuthmayer et al. (2015) entry above is the scientific reference used as
+  inspiration for Tools → SEM pores + microscopic flow (PyVista).
 - The simulator behavior is unchanged by this document.
 - Trial/permanent access control is handled separately by edition markers and
   runtime checks (see trial_guard.py).
-- The companion documents (including references and attributions) can be accessed under the "Help" menu on the program GUI (i.e., user interface). 
+- In case the companion documents (including SIMULATOR_INTRO_AND_REFERENCES.txt) are lost, corrupt or modified, visit https://github.com/Hunchback-19A/Methacrylate-Monolith-Simulator-donut0.x for further information. 
