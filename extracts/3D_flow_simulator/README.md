@@ -2,6 +2,8 @@
 
 Standalone kit for **SEM-informed pore morphology** and a **simplified microscopic flow** visualization in [PyVista](https://pyvista.org/).
 
+The kit is released at: [Methacrylate_Monolith_Simulator_SEM_Microflow_kit_v0.1.0](https://github.com/Hunchback-19A/Methacrylate-Monolith-Simulator-v.donut/releases/tag/sem_microflow_kit_v0.1.0)
+
 This is **not** the full Methacrylate Monolith Simulator desktop app. It is only the 3D pore-flow slice so others can run a demo and see the effect.
 
 > **Status:** Slim extracts (`geometry.py`, `flow_viz.py`), flow/SEM modules, optional C++ sources, and `demo_sem_microflow.py` are in this folder. Add `samples/mesoporous_silica_SEM.tiff` before running the demo (see `samples/ATTRIBUTION.md`).
