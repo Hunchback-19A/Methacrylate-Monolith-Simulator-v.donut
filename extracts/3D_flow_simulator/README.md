@@ -12,7 +12,7 @@ This is **not** the full Methacrylate Monolith Simulator desktop app. It is only
 
 ## What you can do
 
-1. Load a grayscale SEM (or SEM-like) image  
+1. Load a grayscale SEM (or SEM-like) image (in .tif or .tiff format) 
 2. Map dark pores onto a hollow-cylinder (annular) voxel grid  
 3. Compute a simplified steady pressure-driven flow on pore voxels  
 4. View the result in an interactive PyVista window  
